@@ -3621,17 +3621,21 @@ class PGDialect(default.DefaultDialect):
         return bool(cursor.scalar())
 
     def _get_server_version_info(self, connection):
-        v = connection.exec_driver_sql("select pg_catalog.version()").scalar()
-        m = re.match(
-            r".*(?:PostgreSQL|EnterpriseDB) "
-            r"(\d+)\.?(\d+)?(?:\.(\d+))?(?:\.\d+)?(?:devel|beta)?",
-            v,
-        )
-        if not m:
-            raise AssertionError(
-                "Could not determine version from string '%s'" % v
-            )
-        return tuple([int(x) for x in m.group(1, 2, 3) if x is not None])
+        return (9, 2, 0)
+
+        # 先按照 postgresql 9.2 版本返回提供使用
+        # 之后需要返回 MogDB 版本，修改代码中代码判断的相关代码 
+        # v = connection.exec_driver_sql("select pg_catalog.version()").scalar()
+        # m = re.match(
+        #     r".*(?:PostgreSQL|EnterpriseDB|openGauss|MogDB) "
+        #     r"(\d+)\.?(\d+)?(?:\.(\d+))?(?:\.\d+)?(?:devel|beta)?",
+        #     v,
+        # )
+        # if not m:
+        #     raise AssertionError(
+        #         "Could not determine version from string '%s'" % v
+        #     )
+        # return tuple([int(x) for x in m.group(1, 2, 3) if x is not None])
 
     @reflection.cache
     def get_table_oid(self, connection, table_name, schema=None, **kw):
