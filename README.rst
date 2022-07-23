@@ -27,7 +27,7 @@ Usage
 The DSN format is similar to that of regular Postgres::
 
     >>> import sqlalchemy as sa
-    >>> sa.create_engine('mogdb+psycopg2://username@ip:26000/database')
+    >>> sa.create_engine('mogdb+psycopg2://username:password@ip:26000/database')
     Engine(mogdb+psycopg2://username@ip:26000/database)
 
 Releasing

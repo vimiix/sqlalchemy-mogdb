@@ -13,7 +13,6 @@ setup(
     license="MIT",
     url='https://github.com/vimiix/sqlalchemy-mogdb',
     packages=['sqlalchemy_mogdb'],
-    package_data={'sqlalchemy_mogdb': ['mogdb-ca-bundle.crt']},
     python_requires='>=3.4',
     keywords='Enmotech MogDB',
     install_requires=[
