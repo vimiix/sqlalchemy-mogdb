@@ -2,7 +2,7 @@
 
 
 r"""
-.. dialect:: postgresql
+.. dialect:: mogdb
     :name: PostgreSQL
     :full_support: 9.6, 10, 11, 12, 13, 14
     :normal_support: 9.6+
@@ -86,7 +86,7 @@ The CREATE TABLE for the above :class:`_schema.Table` object would be:
        from sqlalchemy.ext.compiler import compiles
 
 
-       @compiles(CreateColumn, 'postgresql')
+       @compiles(CreateColumn, 'mogdb')
        def use_identity(element, compiler, **kw):
            text = compiler.visit_create_column(element, **kw)
            text = text.replace(
@@ -161,7 +161,7 @@ flag on the DBAPI connection object.
 To set isolation level using :func:`_sa.create_engine`::
 
     engine = create_engine(
-        "postgresql+pg8000://scott:tiger@localhost/test",
+        "mogdb+pg8000://scott:tiger@localhost/test",
         execution_options={
             "isolation_level": "REPEATABLE READ"
         }
@@ -241,7 +241,7 @@ at :ref:`schema_set_default_connections`::
     from sqlalchemy import event
     from sqlalchemy import create_engine
 
-    engine = create_engine("postgresql+psycopg2://scott:tiger@host/dbname")
+    engine = create_engine("mogdb+psycopg2://scott:tiger@host/dbname")
 
     @event.listens_for(engine, "connect", insert=True)
     def set_search_path(dbapi_connection, connection_record):
@@ -344,7 +344,7 @@ were set to include ``test_schema``, and we invoked a table
 reflection process as follows::
 
     >>> from sqlalchemy import Table, MetaData, create_engine, text
-    >>> engine = create_engine("postgresql://scott:tiger@localhost/test")
+    >>> engine = create_engine("mogdb://scott:tiger@localhost/test")
     >>> with engine.connect() as conn:
     ...     conn.execute(text("SET search_path TO test_schema, public"))
     ...     metadata_obj = MetaData()
@@ -451,13 +451,13 @@ or they may be inferred by stating the columns and conditions that comprise
 the indexes.
 
 SQLAlchemy provides ``ON CONFLICT`` support via the PostgreSQL-specific
-:func:`_postgresql.insert()` function, which provides
-the generative methods :meth:`_postgresql.Insert.on_conflict_do_update`
-and :meth:`~.postgresql.Insert.on_conflict_do_nothing`:
+:func:`_mogdb.insert()` function, which provides
+the generative methods :meth:`_mogdb.Insert.on_conflict_do_update`
+and :meth:`~.mogdb.Insert.on_conflict_do_nothing`:
 
 .. sourcecode:: pycon+sql
 
-    >>> from sqlalchemy.dialects.postgresql import insert
+    >>> from sqlalchemy_mogdb import insert
     >>> insert_stmt = insert(my_table).values(
     ...     id='some_existing_id',
     ...     data='inserted value')
@@ -491,7 +491,7 @@ Specifying the Target
 Both methods supply the "target" of the conflict using either the
 named constraint or by column inference:
 
-* The :paramref:`_postgresql.Insert.on_conflict_do_update.index_elements` argument
+* The :paramref:`_mogdb.Insert.on_conflict_do_update.index_elements` argument
   specifies a sequence containing string column names, :class:`_schema.Column`
   objects, and/or SQL expression elements, which would identify a unique
   index:
@@ -515,9 +515,9 @@ named constraint or by column inference:
     {opensql}INSERT INTO my_table (id, data) VALUES (%(id)s, %(data)s)
     ON CONFLICT (id) DO UPDATE SET data = %(param_1)s
 
-* When using :paramref:`_postgresql.Insert.on_conflict_do_update.index_elements` to
+* When using :paramref:`_mogdb.Insert.on_conflict_do_update.index_elements` to
   infer an index, a partial index can be inferred by also specifying the
-  use the :paramref:`_postgresql.Insert.on_conflict_do_update.index_where` parameter:
+  use the :paramref:`_mogdb.Insert.on_conflict_do_update.index_where` parameter:
 
   .. sourcecode:: pycon+sql
 
@@ -532,7 +532,7 @@ named constraint or by column inference:
     VALUES (%(data)s, %(user_email)s) ON CONFLICT (user_email)
     WHERE user_email LIKE %(user_email_1)s DO UPDATE SET data = excluded.data
 
-* The :paramref:`_postgresql.Insert.on_conflict_do_update.constraint` argument is
+* The :paramref:`_mogdb.Insert.on_conflict_do_update.constraint` argument is
   used to specify an index directly rather than inferring it.  This can be
   the name of a UNIQUE constraint, a PRIMARY KEY constraint, or an INDEX:
 
@@ -556,7 +556,7 @@ named constraint or by column inference:
     ON CONFLICT ON CONSTRAINT my_table_pk DO UPDATE SET data = %(param_1)s
     {stop}
 
-* The :paramref:`_postgresql.Insert.on_conflict_do_update.constraint` argument may
+* The :paramref:`_mogdb.Insert.on_conflict_do_update.constraint` argument may
   also refer to a SQLAlchemy construct representing a constraint,
   e.g. :class:`.UniqueConstraint`, :class:`.PrimaryKeyConstraint`,
   :class:`.Index`, or :class:`.ExcludeConstraint`.   In this use,
@@ -584,7 +584,7 @@ The SET Clause
 ``ON CONFLICT...DO UPDATE`` is used to perform an update of the already
 existing row, using any combination of new values as well as values
 from the proposed insertion.   These values are specified using the
-:paramref:`_postgresql.Insert.on_conflict_do_update.set_` parameter.  This
+:paramref:`_mogdb.Insert.on_conflict_do_update.set_` parameter.  This
 parameter accepts a dictionary which consists of direct values
 for UPDATE:
 
@@ -607,14 +607,14 @@ for UPDATE:
     those specified using :paramref:`_schema.Column.onupdate`.
     These values will not be exercised for an ON CONFLICT style of UPDATE,
     unless they are manually specified in the
-    :paramref:`_postgresql.Insert.on_conflict_do_update.set_` dictionary.
+    :paramref:`_mogdb.Insert.on_conflict_do_update.set_` dictionary.
 
 Updating using the Excluded INSERT Values
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In order to refer to the proposed insertion row, the special alias
-:attr:`~.postgresql.Insert.excluded` is available as an attribute on
-the :class:`_postgresql.Insert` object; this object is a
+:attr:`~.mogdb.Insert.excluded` is available as an attribute on
+the :class:`_mogdb.Insert` object; this object is a
 :class:`_expression.ColumnCollection`
 which alias contains all columns of the target
 table:
@@ -639,7 +639,7 @@ Additional WHERE Criteria
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :meth:`_expression.Insert.on_conflict_do_update` method also accepts
-a WHERE clause using the :paramref:`_postgresql.Insert.on_conflict_do_update.where`
+a WHERE clause using the :paramref:`_mogdb.Insert.on_conflict_do_update.where`
 parameter, which will limit those rows which receive an UPDATE:
 
 .. sourcecode:: pycon+sql
@@ -666,7 +666,7 @@ Skipping Rows with DO NOTHING
 ``ON CONFLICT`` may be used to skip inserting a row entirely
 if any conflict with a unique or exclusion constraint occurs; below
 this is illustrated using the
-:meth:`~.postgresql.Insert.on_conflict_do_nothing` method:
+:meth:`~.mogdb.Insert.on_conflict_do_nothing` method:
 
 .. sourcecode:: pycon+sql
 
@@ -716,9 +716,9 @@ Emits the equivalent of::
 
     SELECT to_tsvector('fat cats ate rats') @@ to_tsquery('cat & rat')
 
-The :class:`_postgresql.TSVECTOR` type can provide for explicit CAST::
+The :class:`_mogdb.TSVECTOR` type can provide for explicit CAST::
 
-    from sqlalchemy.dialects.postgresql import TSVECTOR
+    from sqlalchemy_mogdb import TSVECTOR
     from sqlalchemy import select, cast
     select(cast("some text", TSVECTOR))
 
@@ -799,15 +799,15 @@ table in an inheritance hierarchy. This can be used to produce the
 syntaxes. It uses SQLAlchemy's hints mechanism::
 
     # SELECT ... FROM ONLY ...
-    result = table.select().with_hint(table, 'ONLY', 'postgresql')
+    result = table.select().with_hint(table, 'ONLY', 'mogdb')
     print(result.fetchall())
 
     # UPDATE ONLY ...
     table.update(values=dict(foo='bar')).with_hint('ONLY',
-                                                   dialect_name='postgresql')
+                                                   dialect_name='mogdb')
 
     # DELETE FROM ONLY ...
-    table.delete().with_hint('ONLY', dialect_name='postgresql')
+    table.delete().with_hint('ONLY', dialect_name='mogdb')
 
 
 .. _postgresql_indexes:
@@ -879,12 +879,12 @@ that is identified in the dictionary by name, e.g.::
         })
 
 Operator classes are also supported by the
-:class:`_postgresql.ExcludeConstraint` construct using the
-:paramref:`_postgresql.ExcludeConstraint.ops` parameter. See that parameter for
+:class:`_mogdb.ExcludeConstraint` construct using the
+:paramref:`_mogdb.ExcludeConstraint.ops` parameter. See that parameter for
 details.
 
 .. versionadded:: 1.3.21 added support for operator classes with
-   :class:`_postgresql.ExcludeConstraint`.
+   :class:`_mogdb.ExcludeConstraint`.
 
 
 Index Types
@@ -1007,7 +1007,7 @@ of :class:`.PGInspector`, which offers additional methods::
 
     from sqlalchemy import create_engine, inspect
 
-    engine = create_engine("postgresql+psycopg2://localhost/test")
+    engine = create_engine("mogdb+psycopg2://localhost/test")
     insp = inspect(engine)  # will be a PGInspector
 
     print(insp.get_enums())
@@ -1218,10 +1218,10 @@ scalar value.  PostgreSQL functions such as ``json_array_elements()``,
     FROM json_array_elements(:json_array_elements_1) AS x
 
 * ``unnest()`` - in order to generate a PostgreSQL ARRAY literal, the
-  :func:`_postgresql.array` construct may be used::
+  :func:`_mogdb.array` construct may be used::
 
 
-    >>> from sqlalchemy.dialects.postgresql import array
+    >>> from sqlalchemy_mogdb import array
     >>> from sqlalchemy import select, func
     >>> stmt = select(func.unnest(array([1, 2])).column_valued())
     >>> print(stmt)
@@ -1299,13 +1299,13 @@ ARRAY Types
 The PostgreSQL dialect supports arrays, both as multidimensional column types
 as well as array literals:
 
-* :class:`_postgresql.ARRAY` - ARRAY datatype
+* :class:`_mogdb.ARRAY` - ARRAY datatype
 
-* :class:`_postgresql.array` - array literal
+* :class:`_mogdb.array` - array literal
 
-* :func:`_postgresql.array_agg` - ARRAY_AGG SQL function
+* :func:`_mogdb.array_agg` - ARRAY_AGG SQL function
 
-* :class:`_postgresql.aggregate_order_by` - helper for PG's ORDER BY aggregate
+* :class:`_mogdb.aggregate_order_by` - helper for PG's ORDER BY aggregate
   function syntax.
 
 JSON Types
@@ -1315,18 +1315,18 @@ The PostgreSQL dialect supports both JSON and JSONB datatypes, including
 psycopg2's native support and support for all of PostgreSQL's special
 operators:
 
-* :class:`_postgresql.JSON`
+* :class:`_mogdb.JSON`
 
-* :class:`_postgresql.JSONB`
+* :class:`_mogdb.JSONB`
 
 HSTORE Type
 -----------
 
 The PostgreSQL HSTORE type as well as hstore literals are supported:
 
-* :class:`_postgresql.HSTORE` - HSTORE datatype
+* :class:`_mogdb.HSTORE` - HSTORE datatype
 
-* :class:`_postgresql.hstore` - hstore literal
+* :class:`_mogdb.hstore` - hstore literal
 
 ENUM Types
 ----------
@@ -1337,11 +1337,11 @@ complexity on the SQLAlchemy side in terms of when this type should be
 CREATED and DROPPED.   The type object is also an independently reflectable
 entity.   The following sections should be consulted:
 
-* :class:`_postgresql.ENUM` - DDL and typing support for ENUM.
+* :class:`_mogdb.ENUM` - DDL and typing support for ENUM.
 
 * :meth:`.PGInspector.get_enums` - retrieve a listing of current ENUM types
 
-* :meth:`.postgresql.ENUM.create` , :meth:`.postgresql.ENUM.drop` - individual
+* :meth:`.mogdb.ENUM.create` , :meth:`.mogdb.ENUM.drop` - individual
   CREATE and DROP commands for ENUM.
 
 .. _postgresql_array_of_enum:
@@ -1359,7 +1359,7 @@ was needed in order to allow this combination to work, described below.
 .. sourcecode:: python
 
     from sqlalchemy import TypeDecorator
-    from sqlalchemy.dialects.postgresql import ARRAY
+    from sqlalchemy_mogdb import ARRAY
 
     class ArrayOfEnum(TypeDecorator):
         impl = ARRAY
@@ -1429,9 +1429,9 @@ import datetime as dt
 import re
 from uuid import UUID as _python_UUID
 
-from . import array as _array
+from .array import ARRAY
 from . import dml
-from . import hstore as _hstore
+from .hstore import HSTORE
 from . import json as _json
 from . import ranges as _ranges
 from sqlalchemy import exc
@@ -1873,7 +1873,7 @@ PGUuid = UUID
 
 class TSVECTOR(sqltypes.TypeEngine):
 
-    """The :class:`_postgresql.TSVECTOR` type implements the PostgreSQL
+    """The :class:`_mogdb.TSVECTOR` type implements the PostgreSQL
     text search type TSVECTOR.
 
     It can be used to do full text queries on natural language
@@ -1899,7 +1899,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
 
     When the builtin type :class:`_types.Enum` is used and the
     :paramref:`.Enum.native_enum` flag is left at its default of
-    True, the PostgreSQL backend will use a :class:`_postgresql.ENUM`
+    True, the PostgreSQL backend will use a :class:`_mogdb.ENUM`
     type as the implementation, so the special create/drop rules
     will be used.
 
@@ -1908,7 +1908,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
     parent table, in that it may be "owned" by just a single table, or
     may be shared among many tables.
 
-    When using :class:`_types.Enum` or :class:`_postgresql.ENUM`
+    When using :class:`_types.Enum` or :class:`_mogdb.ENUM`
     in an "inline" fashion, the ``CREATE TYPE`` and ``DROP TYPE`` is emitted
     corresponding to when the :meth:`_schema.Table.create` and
     :meth:`_schema.Table.drop`
@@ -1923,7 +1923,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
 
     To use a common enumerated type between multiple tables, the best
     practice is to declare the :class:`_types.Enum` or
-    :class:`_postgresql.ENUM` independently, and associate it with the
+    :class:`_mogdb.ENUM` independently, and associate it with the
     :class:`_schema.MetaData` object itself::
 
         my_enum = ENUM('a', 'b', 'c', name='myenum', metadata=metadata)
@@ -1959,7 +1959,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
         my_enum.create(engine)
         my_enum.drop(engine)
 
-    .. versionchanged:: 1.0.0 The PostgreSQL :class:`_postgresql.ENUM` type
+    .. versionchanged:: 1.0.0 The PostgreSQL :class:`_mogdb.ENUM` type
        now behaves more strictly with regards to CREATE/DROP.  A metadata-level
        ENUM type will only be created and dropped at the metadata level,
        not the table level, with the exception of
@@ -1972,7 +1972,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
     native_enum = True
 
     def __init__(self, *enums, **kw):
-        """Construct an :class:`_postgresql.ENUM`.
+        """Construct an :class:`_mogdb.ENUM`.
 
         Arguments are the same as that of
         :class:`_types.Enum`, but also including
@@ -1987,14 +1987,14 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
          is dropped.    When ``False``, no check
          will be performed and no ``CREATE TYPE``
          or ``DROP TYPE`` is emitted, unless
-         :meth:`~.postgresql.ENUM.create`
-         or :meth:`~.postgresql.ENUM.drop`
+         :meth:`~.mogdb.ENUM.create`
+         or :meth:`~.mogdb.ENUM.drop`
          are called directly.
          Setting to ``False`` is helpful
          when invoking a creation scheme to a SQL file
          without access to the actual database -
-         the :meth:`~.postgresql.ENUM.create` and
-         :meth:`~.postgresql.ENUM.drop` methods can
+         the :meth:`~.mogdb.ENUM.create` and
+         :meth:`~.mogdb.ENUM.drop` methods can
          be used to emit SQL to a target bind.
 
         """
@@ -2002,7 +2002,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
         if native_enum is False:
             util.warn(
                 "the native_enum flag does not apply to the "
-                "sqlalchemy.dialects.postgresql.ENUM datatype; this type "
+                "sqlalchemy_mogdb.ENUM datatype; this type "
                 "always refers to ENUM.   Use sqlalchemy.types.Enum for "
                 "non-native enum."
             )
@@ -2011,7 +2011,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
 
     @classmethod
     def adapt_emulated_to_native(cls, impl, **kw):
-        """Produce a PostgreSQL native :class:`_postgresql.ENUM` from plain
+        """Produce a PostgreSQL native :class:`_mogdb.ENUM` from plain
         :class:`.Enum`.
 
         """
@@ -2027,7 +2027,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
 
     def create(self, bind=None, checkfirst=True):
         """Emit ``CREATE TYPE`` for this
-        :class:`_postgresql.ENUM`.
+        :class:`_mogdb.ENUM`.
 
         If the underlying dialect does not support
         PostgreSQL CREATE TYPE, no action is taken.
@@ -2048,7 +2048,7 @@ class ENUM(sqltypes.NativeForEmulated, sqltypes.Enum):
 
     def drop(self, bind=None, checkfirst=True):
         """Emit ``DROP TYPE`` for this
-        :class:`_postgresql.ENUM`.
+        :class:`_mogdb.ENUM`.
 
         If the underlying dialect does not support
         PostgreSQL DROP TYPE, no action is taken.
@@ -2168,7 +2168,7 @@ class _ColonCast(elements.Cast):
 
 
 colspecs = {
-    sqltypes.ARRAY: _array.ARRAY,
+    sqltypes.ARRAY: ARRAY,
     sqltypes.Interval: INTERVAL,
     sqltypes.Enum: ENUM,
     sqltypes.JSON.JSONPathType: _json.JSONPathType,
@@ -2176,8 +2176,8 @@ colspecs = {
 }
 
 ischema_names = {
-    "_array": _array.ARRAY,
-    "hstore": _hstore.HSTORE,
+    "_array": ARRAY,
+    "hstore": HSTORE,
     "json": _json.JSON,
     "jsonb": _json.JSONB,
     "int4range": _ranges.INT4RANGE,
@@ -2698,7 +2698,7 @@ class PGDDLCompiler(compiler.DDLCompiler):
         return colspec
 
     def _define_constraint_validity(self, constraint):
-        not_valid = constraint.dialect_options["postgresql"]["not_valid"]
+        not_valid = constraint.dialect_options["mogdb"]["not_valid"]
         return " NOT VALID" if not_valid else ""
 
     def visit_check_constraint(self, constraint):
@@ -2757,7 +2757,7 @@ class PGDDLCompiler(compiler.DDLCompiler):
         text += "INDEX "
 
         if self.dialect._supports_create_index_concurrently:
-            concurrently = index.dialect_options["postgresql"]["concurrently"]
+            concurrently = index.dialect_options["mogdb"]["concurrently"]
             if concurrently:
                 text += "CONCURRENTLY "
 
@@ -2769,14 +2769,14 @@ class PGDDLCompiler(compiler.DDLCompiler):
             preparer.format_table(index.table),
         )
 
-        using = index.dialect_options["postgresql"]["using"]
+        using = index.dialect_options["mogdb"]["using"]
         if using:
             text += (
                 "USING %s "
                 % self.preparer.validate_sql_phrase(using, IDX_USING).lower()
             )
 
-        ops = index.dialect_options["postgresql"]["ops"]
+        ops = index.dialect_options["mogdb"]["ops"]
         text += "(%s)" % (
             ", ".join(
                 [
@@ -2797,7 +2797,7 @@ class PGDDLCompiler(compiler.DDLCompiler):
             )
         )
 
-        includeclause = index.dialect_options["postgresql"]["include"]
+        includeclause = index.dialect_options["mogdb"]["include"]
         if includeclause:
             inclusions = [
                 index.table.c[col]
@@ -2809,7 +2809,7 @@ class PGDDLCompiler(compiler.DDLCompiler):
                 [preparer.quote(c.name) for c in inclusions]
             )
 
-        withclause = index.dialect_options["postgresql"]["with"]
+        withclause = index.dialect_options["mogdb"]["with"]
         if withclause:
             text += " WITH (%s)" % (
                 ", ".join(
@@ -2820,11 +2820,11 @@ class PGDDLCompiler(compiler.DDLCompiler):
                 )
             )
 
-        tablespace_name = index.dialect_options["postgresql"]["tablespace"]
+        tablespace_name = index.dialect_options["mogdb"]["tablespace"]
         if tablespace_name:
             text += " TABLESPACE %s" % preparer.quote(tablespace_name)
 
-        whereclause = index.dialect_options["postgresql"]["where"]
+        whereclause = index.dialect_options["mogdb"]["where"]
         if whereclause is not None:
             whereclause = coercions.expect(
                 roles.DDLExpressionRole, whereclause
@@ -2843,7 +2843,7 @@ class PGDDLCompiler(compiler.DDLCompiler):
         text = "\nDROP INDEX "
 
         if self.dialect._supports_drop_index_concurrently:
-            concurrently = index.dialect_options["postgresql"]["concurrently"]
+            concurrently = index.dialect_options["mogdb"]["concurrently"]
             if concurrently:
                 text += "CONCURRENTLY "
 
@@ -2884,7 +2884,7 @@ class PGDDLCompiler(compiler.DDLCompiler):
 
     def post_create_table(self, table):
         table_opts = []
-        pg_opts = table.dialect_options["postgresql"]
+        pg_opts = table.dialect_options["mogdb"]
 
         inherits = pg_opts.get("inherits")
         if inherits is not None:
@@ -3206,8 +3206,8 @@ class PGExecutionContext(default.DefaultExecutionContext):
                 except AttributeError:
                     tab = column.table.name
                     col = column.name
-                    tab = tab[0 : 29 + max(0, (29 - len(col)))]
-                    col = col[0 : 29 + max(0, (29 - len(tab)))]
+                    tab = tab[0:29 + max(0, (29 - len(col)))]
+                    col = col[0:29 + max(0, (29 - len(tab)))]
                     name = "%s_%s_seq" % (tab, col)
                     column._postgresql_seq_name = seq_name = name
 
@@ -3265,7 +3265,7 @@ class PGDeferrableConnectionCharacteristic(
 
 
 class PGDialect(default.DefaultDialect):
-    name = "postgresql"
+    name = "mogdb"
     supports_statement_cache = True
     supports_alter = True
     max_identifier_length = 63
@@ -3624,8 +3624,10 @@ class PGDialect(default.DefaultDialect):
         return (9, 2, 0)
 
         # 先按照 postgresql 9.2 版本返回提供使用
-        # 之后需要返回 MogDB 版本，修改代码中代码判断的相关代码 
-        # v = connection.exec_driver_sql("select pg_catalog.version()").scalar()
+        # 之后需要返回 MogDB 版本，修改代码中代码判断的相关代码
+        # v = connection.exec_driver_sql(
+        #   "select pg_catalog.version()"
+        # ).scalar()
         # m = re.match(
         #     r".*(?:PostgreSQL|EnterpriseDB|openGauss|MogDB) "
         #     r"(\d+)\.?(\d+)?(?:\.(\d+))?(?:\.\d+)?(?:devel|beta)?",

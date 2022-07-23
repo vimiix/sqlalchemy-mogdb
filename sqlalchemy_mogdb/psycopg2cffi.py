@@ -15,7 +15,7 @@ is as per ``psycopg2``.
 
 .. seealso::
 
-    :mod:`sqlalchemy.dialects.mogdb.psycopg2`
+    :mod:`sqlalchemy_mogdb.psycopg2`
 
 """  # noqa
 from .psycopg2 import PGDialect_psycopg2

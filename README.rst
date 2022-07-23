@@ -3,10 +3,6 @@ sqlalchemy-mogdb
 
 Enmotech MogDB dialect for SQLAlchemy.
 
-.. image:: https://travis-ci.org/sqlalchemy-mogdb/sqlalchemy-mogdb.svg?branch=main
-   :target: https://travis-ci.org/sqlalchemy-mogdb/sqlalchemy-mogdb
-   :alt: Travis CI build status
-
 Installation
 ------------
 

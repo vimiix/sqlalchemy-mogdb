@@ -16,7 +16,7 @@ class aggregate_order_by(expression.ColumnElement):
 
     E.g.::
 
-        from sqlalchemy.dialects.postgresql import aggregate_order_by
+        from sqlalchemy_mogdb import aggregate_order_by
         expr = func.array_agg(aggregate_order_by(table.c.a, table.c.b.desc()))
         stmt = select(expr)
 
@@ -48,7 +48,7 @@ class aggregate_order_by(expression.ColumnElement):
 
     __visit_name__ = "aggregate_order_by"
 
-    stringify_dialect = "postgresql"
+    stringify_dialect = "mogdb"
     inherit_cache = False
 
     def __init__(self, target, *order_by):
@@ -97,7 +97,7 @@ class ExcludeConstraint(ColumnCollectionConstraint):
     where = None
     inherit_cache = False
 
-    create_drop_stringify_dialect = "postgresql"
+    create_drop_stringify_dialect = "mogdb"
 
     @elements._document_text_coercion(
         "where",

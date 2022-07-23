@@ -272,7 +272,7 @@ class hstore(sqlfunc.GenericFunction):
 
     E.g.::
 
-        from sqlalchemy.dialects.postgresql import array, hstore
+        from sqlalchemy_mogdb import array, hstore
 
         select(hstore('key1', 'value1'))
 
@@ -372,8 +372,8 @@ def _parse_error(hstore_str, pos):
     ctx = 20
     hslen = len(hstore_str)
 
-    parsed_tail = hstore_str[max(pos - ctx - 1, 0) : min(pos, hslen)]
-    residual = hstore_str[min(pos, hslen) : min(pos + ctx + 1, hslen)]
+    parsed_tail = hstore_str[max(pos - ctx - 1, 0):min(pos, hslen)]
+    residual = hstore_str[min(pos, hslen):min(pos + ctx + 1, hslen)]
 
     if len(parsed_tail) > ctx:
         parsed_tail = "[...]" + parsed_tail[1:]

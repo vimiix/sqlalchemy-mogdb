@@ -30,17 +30,17 @@ def All(other, arrexpr, operator=operators.eq):
 
 class array(expression.ClauseList, expression.ColumnElement):
 
-    """A PostgreSQL ARRAY literal.
+    """A MogDB ARRAY literal.
 
     This is used to produce ARRAY literals in SQL expressions, e.g.::
 
-        from sqlalchemy.dialects.postgresql import array
-        from sqlalchemy.dialects import postgresql
+        from sqlalchemy_mogdb import array
+        from sqlalchemy.dialects import mogdb
         from sqlalchemy import select, func
 
         stmt = select(array([1,2]) + array([3,4,5]))
 
-        print(stmt.compile(dialect=postgresql.dialect()))
+        print(stmt.compile(dialect=mogdb.dialect()))
 
     Produces the SQL::
 
@@ -64,7 +64,7 @@ class array(expression.ClauseList, expression.ColumnElement):
                 array([1, 2]), array([3, 4]), array([column('q'), column('x')])
             ])
         )
-        print(stmt.compile(dialect=postgresql.dialect()))
+        print(stmt.compile(dialect=mogdb.dialect()))
 
     Produces::
 
@@ -75,13 +75,13 @@ class array(expression.ClauseList, expression.ColumnElement):
 
     .. seealso::
 
-        :class:`_postgresql.ARRAY`
+        :class:`_mogdb.ARRAY`
 
     """
 
     __visit_name__ = "array"
 
-    stringify_dialect = "postgresql"
+    stringify_dialect = "mogdb"
     inherit_cache = True
 
     def __init__(self, clauses, **kw):
@@ -148,48 +148,48 @@ OVERLAP = operators.custom_op("&&", precedence=5, is_comparison=True)
 
 class ARRAY(sqltypes.ARRAY):
 
-    """PostgreSQL ARRAY type.
+    """MogDB ARRAY type.
 
-    .. versionchanged:: 1.1 The :class:`_postgresql.ARRAY` type is now
+    .. versionchanged:: 1.1 The :class:`_mogdb.ARRAY` type is now
        a subclass of the core :class:`_types.ARRAY` type.
 
-    The :class:`_postgresql.ARRAY` type is constructed in the same way
+    The :class:`_mogdb.ARRAY` type is constructed in the same way
     as the core :class:`_types.ARRAY` type; a member type is required, and a
     number of dimensions is recommended if the type is to be used for more
     than one dimension::
 
-        from sqlalchemy.dialects import postgresql
+        from sqlalchemy.dialects import mogdb
 
         mytable = Table("mytable", metadata,
-                Column("data", postgresql.ARRAY(Integer, dimensions=2))
+                Column("data", mogdb.ARRAY(Integer, dimensions=2))
             )
 
-    The :class:`_postgresql.ARRAY` type provides all operations defined on the
+    The :class:`_mogdb.ARRAY` type provides all operations defined on the
     core :class:`_types.ARRAY` type, including support for "dimensions",
     indexed access, and simple matching such as
     :meth:`.types.ARRAY.Comparator.any` and
-    :meth:`.types.ARRAY.Comparator.all`.  :class:`_postgresql.ARRAY`
+    :meth:`.types.ARRAY.Comparator.all`.  :class:`_mogdb.ARRAY`
     class also
-    provides PostgreSQL-specific methods for containment operations, including
-    :meth:`.postgresql.ARRAY.Comparator.contains`
-    :meth:`.postgresql.ARRAY.Comparator.contained_by`, and
-    :meth:`.postgresql.ARRAY.Comparator.overlap`, e.g.::
+    provides MogDB-specific methods for containment operations, including
+    :meth:`.mogdb.ARRAY.Comparator.contains`
+    :meth:`.mogdb.ARRAY.Comparator.contained_by`, and
+    :meth:`.mogdb.ARRAY.Comparator.overlap`, e.g.::
 
         mytable.c.data.contains([1, 2])
 
-    The :class:`_postgresql.ARRAY` type may not be supported on all
-    PostgreSQL DBAPIs; it is currently known to work on psycopg2 only.
+    The :class:`_mogdb.ARRAY` type may not be supported on all
+    MogDB DBAPIs; it is currently known to work on psycopg2 only.
 
-    Additionally, the :class:`_postgresql.ARRAY`
+    Additionally, the :class:`_mogdb.ARRAY`
     type does not work directly in
     conjunction with the :class:`.ENUM` type.  For a workaround, see the
-    special type at :ref:`postgresql_array_of_enum`.
+    special type at :ref:`mogdb_array_of_enum`.
 
     .. seealso::
 
         :class:`_types.ARRAY` - base array type
 
-        :class:`_postgresql.array` - produces a literal array value.
+        :class:`_mogdb.array` - produces a literal array value.
 
     """
 
@@ -259,7 +259,7 @@ class ARRAY(sqltypes.ARRAY):
          they were declared.
 
         :param zero_indexes=False: when True, index values will be converted
-         between Python zero-based and PostgreSQL one-based indexes, e.g.
+         between Python zero-based and MogDB one-based indexes, e.g.
          a value of one will be added to all index values before passing
          to the database.
 

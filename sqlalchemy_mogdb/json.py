@@ -93,12 +93,12 @@ class JSONPathType(sqltypes.JSON.JSONPathType):
 class JSON(sqltypes.JSON):
     """Represent the PostgreSQL JSON type.
 
-    :class:`_postgresql.JSON` is used automatically whenever the base
+    :class:`_mogdb.JSON` is used automatically whenever the base
     :class:`_types.JSON` datatype is used against a PostgreSQL backend,
     however base :class:`_types.JSON` datatype does not provide Python
     accessors for PostgreSQL-specific comparison methods such as
-    :meth:`_postgresql.JSON.Comparator.astext`; additionally, to use
-    PostgreSQL ``JSONB``, the :class:`_postgresql.JSONB` datatype should
+    :meth:`_mogdb.JSON.Comparator.astext`; additionally, to use
+    PostgreSQL ``JSONB``, the :class:`_mogdb.JSONB` datatype should
     be used explicitly.
 
     .. seealso::
@@ -155,7 +155,7 @@ class JSON(sqltypes.JSON):
     using psycopg2, the DBAPI only allows serializers at the per-cursor
     or per-connection level.   E.g.::
 
-        engine = create_engine("postgresql://scott:tiger@localhost/test",
+        engine = create_engine("mogdb://scott:tiger@localhost/test",
                                 json_serializer=my_serialize_fn,
                                 json_deserializer=my_deserialize_fn
                         )
@@ -167,9 +167,9 @@ class JSON(sqltypes.JSON):
 
         :class:`_types.JSON` - Core level JSON type
 
-        :class:`_postgresql.JSONB`
+        :class:`_mogdb.JSONB`
 
-    .. versionchanged:: 1.1 :class:`_postgresql.JSON` is now a PostgreSQL-
+    .. versionchanged:: 1.1 :class:`_mogdb.JSON` is now a PostgreSQL-
        specific specialization of the new :class:`_types.JSON` type.
 
     """  # noqa
@@ -239,7 +239,7 @@ class JSON(sqltypes.JSON):
 class JSONB(JSON):
     """Represent the PostgreSQL JSONB type.
 
-    The :class:`_postgresql.JSONB` type stores arbitrary JSONB format data,
+    The :class:`_mogdb.JSONB` type stores arbitrary JSONB format data,
     e.g.::
 
         data_table = Table('data_table', metadata,
@@ -253,7 +253,7 @@ class JSONB(JSON):
                 data = {"key1": "value1", "key2": "value2"}
             )
 
-    The :class:`_postgresql.JSONB` type includes all operations provided by
+    The :class:`_mogdb.JSONB` type includes all operations provided by
     :class:`_types.JSON`, including the same behaviors for indexing
     operations.
     It also adds additional operators specific to JSONB, including
@@ -261,7 +261,7 @@ class JSONB(JSON):
     :meth:`.JSONB.Comparator.has_any`, :meth:`.JSONB.Comparator.contains`,
     and :meth:`.JSONB.Comparator.contained_by`.
 
-    Like the :class:`_types.JSON` type, the :class:`_postgresql.JSONB`
+    Like the :class:`_types.JSON` type, the :class:`_mogdb.JSONB`
     type does not detect
     in-place changes when used with the ORM, unless the
     :mod:`sqlalchemy.ext.mutable` extension is used.

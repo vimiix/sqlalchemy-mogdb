@@ -406,7 +406,7 @@ is set to the ``logging.INFO`` level, notice messages will be logged::
 
     import logging
 
-    logging.getLogger('sqlalchemy.dialects.mogdb').setLevel(logging.INFO)
+    logging.getLogger('sqlalchemy_mogdb').setLevel(logging.INFO)
 
 Above, it is assumed that logging is configured externally.  If this is not
 the case, configuration such as ``logging.basicConfig()`` must be utilized::
@@ -414,7 +414,7 @@ the case, configuration such as ``logging.basicConfig()`` must be utilized::
     import logging
 
     logging.basicConfig()   # log messages to stdout
-    logging.getLogger('sqlalchemy.dialects.mogdb').setLevel(logging.INFO)
+    logging.getLogger('sqlalchemy_mogdb').setLevel(logging.INFO)
 
 .. seealso::
 
@@ -491,7 +491,7 @@ from sqlalchemy.engine import cursor as _cursor
 from sqlalchemy.util import collections_abc
 
 
-logger = logging.getLogger("sqlalchemy.dialects.mogdb")
+logger = logging.getLogger("sqlalchemy_mogdb")
 
 
 class _PGNumeric(sqltypes.Numeric):

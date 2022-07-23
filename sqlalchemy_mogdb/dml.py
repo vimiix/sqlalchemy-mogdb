@@ -14,7 +14,7 @@ from sqlalchemy.sql.expression import alias
 from sqlalchemy.util.langhelpers import public_factory
 
 
-__all__ = ("Insert", "insert")
+__all__ = ("Insert")
 
 
 class Insert(StandardInsert):
@@ -29,7 +29,7 @@ class Insert(StandardInsert):
 
     """
 
-    stringify_dialect = "postgresql"
+    stringify_dialect = "mogdb"
     inherit_cache = False
 
     @util.memoized_property
@@ -170,13 +170,8 @@ class Insert(StandardInsert):
         )
 
 
-insert = public_factory(
-    Insert, ".dialects.postgresql.insert", ".dialects.postgresql.Insert"
-)
-
-
 class OnConflictClause(ClauseElement):
-    stringify_dialect = "postgresql"
+    stringify_dialect = "mogdb"
 
     def __init__(self, constraint=None, index_elements=None, index_where=None):
 
@@ -199,7 +194,7 @@ class OnConflictClause(ClauseElement):
                 self.inferred_target_whereclause = None
             elif isinstance(constraint, schema.Index):
                 index_elements = constraint.expressions
-                index_where = constraint.dialect_options["postgresql"].get(
+                index_where = constraint.dialect_options["mogdb"].get(
                     "where"
                 )
             elif isinstance(constraint, ext.ExcludeConstraint):
@@ -207,7 +202,7 @@ class OnConflictClause(ClauseElement):
                 index_where = constraint.where
             else:
                 index_elements = constraint.columns
-                index_where = constraint.dialect_options["postgresql"].get(
+                index_where = constraint.dialect_options["mogdb"].get(
                     "where"
                 )
 

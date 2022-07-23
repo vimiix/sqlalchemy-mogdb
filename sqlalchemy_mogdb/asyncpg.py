@@ -1,10 +1,10 @@
 # mgodb/asyncpg.py
 
 r"""
-.. dialect:: postgresql+asyncpg
+.. dialect:: mogdb+asyncpg
     :name: asyncpg
     :dbapi: asyncpg
-    :connectstring: postgresql+asyncpg://user:password@host:port/dbname[?key=value&key=value...]
+    :connectstring: mogdb+asyncpg://user:password@host:port/dbname[?key=value&key=value...]
     :url: https://magicstack.github.io/asyncpg/
 
 The asyncpg dialect is SQLAlchemy's first Python asyncio dialect.
@@ -17,7 +17,7 @@ This dialect should normally be used only with the
 :func:`_asyncio.create_async_engine` engine creation function::
 
     from sqlalchemy.ext.asyncio import create_async_engine
-    engine = create_async_engine("postgresql+asyncpg://user:pass@hostname/dbname")
+    engine = create_async_engine("mogdb+asyncpg://user:pass@hostname/dbname")
 
 The dialect can also be run as a "synchronous" dialect within the
 :func:`_sa.create_engine` function, which will pass "await" calls into
@@ -27,7 +27,7 @@ adding the SQLAlchemy-specific flag ``async_fallback`` to the URL
 in conjunction with :func:`_sa.create_engine`::
 
     # for testing purposes only; do not use in production!
-    engine = create_engine("postgresql+asyncpg://user:pass@hostname/dbname?async_fallback=true")
+    engine = create_engine("mogdb+asyncpg://user:pass@hostname/dbname?async_fallback=true")
 
 
 .. versionadded:: 1.4
@@ -60,21 +60,21 @@ asyncpg dialect, therefore is handled as a DBAPI argument, not a dialect
 argument)::
 
 
-    engine = create_async_engine("postgresql+asyncpg://user:pass@hostname/dbname?prepared_statement_cache_size=500")
+    engine = create_async_engine("mogdb+asyncpg://user:pass@hostname/dbname?prepared_statement_cache_size=500")
 
 To disable the prepared statement cache, use a value of zero::
 
-    engine = create_async_engine("postgresql+asyncpg://user:pass@hostname/dbname?prepared_statement_cache_size=0")
+    engine = create_async_engine("mogdb+asyncpg://user:pass@hostname/dbname?prepared_statement_cache_size=0")
 
 .. versionadded:: 1.4.0b2 Added ``prepared_statement_cache_size`` for asyncpg.
 
 
 .. warning::  The ``asyncpg`` database driver necessarily uses caches for
-   PostgreSQL type OIDs, which become stale when custom PostgreSQL datatypes
+   MogDB type OIDs, which become stale when custom MogDB datatypes
    such as ``ENUM`` objects are changed via DDL operations.   Additionally,
    prepared statements themselves which are optionally cached by SQLAlchemy's
    driver as described above may also become "stale" when DDL has been emitted
-   to the PostgreSQL database which modifies the tables or other objects
+   to the MogDB database which modifies the tables or other objects
    involved in a particular prepared statement.
 
    The SQLAlchemy asyncpg dialect will invalidate these caches within its local
@@ -89,21 +89,21 @@ To disable the prepared statement cache, use a value of zero::
    clearing its internal caches as well as those of the asyncpg driver in
    response to them, but cannot prevent them from being raised in the first
    place if the cached prepared statement or asyncpg type caches have gone
-   stale, nor can it retry the statement as the PostgreSQL transaction is
+   stale, nor can it retry the statement as the MogDB transaction is
    invalidated when these errors occur.
 
-Disabling the PostgreSQL JIT to improve ENUM datatype handling
+Disabling the MogDB JIT to improve ENUM datatype handling
 ---------------------------------------------------------------
 
 Asyncpg has an `issue <https://github.com/MagicStack/asyncpg/issues/727>`_ when
-using PostgreSQL ENUM datatypes, where upon the creation of new database
+using MogDB ENUM datatypes, where upon the creation of new database
 connections, an expensive query may be emitted in order to retrieve metadata
 regarding custom types which has been shown to negatively affect performance.
-To mitigate this issue, the PostgreSQL "jit" setting may be disabled from the
+To mitigate this issue, the MogDB "jit" setting may be disabled from the
 client using this setting passed to :func:`_asyncio.create_async_engine`::
 
     engine = create_async_engine(
-        "postgresql+asyncpg://user:password@localhost/tmp",
+        "mogdb+asyncpg://user:password@localhost/tmp",
         connect_args={"server_settings": {"jit": "off"}},
     )
 
@@ -1061,14 +1061,14 @@ class PGDialect_asyncpg(PGDialect):
         deserializer = self._json_deserializer or _py_json.loads
 
         def _jsonb_encoder(str_value):
-            # \x01 is the prefix for jsonb used by PostgreSQL.
+            # \x01 is the prefix for jsonb used by MogDB.
             # asyncpg requires it when format='binary'
             return b"\x01" + str_value.encode()
 
         deserializer = self._json_deserializer or _py_json.loads
 
         def _jsonb_decoder(bin_value):
-            # the byte is the \x01 prefix for jsonb used by PostgreSQL.
+            # the byte is the \x01 prefix for jsonb used by MogDB.
             # asyncpg returns it when format='binary'
             return deserializer(bin_value[1:].decode())
 

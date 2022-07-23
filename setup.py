@@ -1,13 +1,11 @@
 from setuptools import setup
 
 readme = open('README.rst').read()
-history = open('CHANGES.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='sqlalchemy-mogdb',
     version='0.1',
     description='Enmotech MogDB Dialect for SQLAlchemy',
-    long_description=readme + '\n\n' + history,
     long_description_content_type='text/x-rst',
     author='enmotech',
     maintainer='Vimiix',
@@ -17,6 +15,7 @@ setup(
     packages=['sqlalchemy_mogdb'],
     package_data={'sqlalchemy_mogdb': ['mogdb-ca-bundle.crt']},
     python_requires='>=3.4',
+    keywords='Enmotech MogDB',
     install_requires=[
         # requires sqlalchemy.sql.base.DialectKWArgs.dialect_options, new in
         # version 0.9.2
