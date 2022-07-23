@@ -4,7 +4,7 @@ readme = open('README.rst').read()
 
 setup(
     name='sqlalchemy-mogdb',
-    version='0.1',
+    version='0.1.0',
     description='Enmotech MogDB Dialect for SQLAlchemy',
     long_description_content_type='text/x-rst',
     author='enmotech',
